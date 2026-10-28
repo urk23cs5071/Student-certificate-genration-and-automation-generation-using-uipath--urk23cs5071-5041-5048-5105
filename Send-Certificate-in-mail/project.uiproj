@@ -1,0 +1,6 @@
+{
+  "Name": "Send-Certificate-in-mail",
+  "ProjectType": "Process",
+  "Description": "Generate course completion certificates and email them safely",
+  "MainFile": "Main.xaml"
+}

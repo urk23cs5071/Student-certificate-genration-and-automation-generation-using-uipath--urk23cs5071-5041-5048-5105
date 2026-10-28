@@ -1,0 +1,412 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="ProcessStudents" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://schemas.uipath.com/workflow/activities/word" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ue="clr-namespace:UiPath.Excel;assembly=UiPath.Excel.Activities" xmlns:ueab="clr-namespace:UiPath.Excel.Activities.Business;assembly=UiPath.Excel.Activities" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_ProjectDirectory" Type="InArgument(x:String)" />
+    <x:Property Name="in_SendEmails" Type="InArgument(x:Boolean)" />
+    <x:Property Name="in_OrganizationName" Type="InArgument(x:String)" />
+    <x:Property Name="out_TotalStudents" Type="OutArgument(x:Int32)" />
+    <x:Property Name="out_CertificatesGenerated" Type="OutArgument(x:Int32)" />
+    <x:Property Name="out_EmailsSent" Type="OutArgument(x:Int32)" />
+    <x:Property Name="out_FailedRecords" Type="OutArgument(x:Int32)" />
+    <x:Property Name="out_EmailsSkipped" Type="OutArgument(x:Int32)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System.Linq.Expressions</x:String>
+      <x:String>System.Runtime.Serialization</x:String>
+      <x:String>UiPath.Excel</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>NPOI.Core</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Primitives</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Configuration.ConfigurationManager</AssemblyReference>
+      <AssemblyReference>System.Console</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Linq.Async</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.Memory.Data</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Private.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Private.Uri</AssemblyReference>
+      <AssemblyReference>System.Runtime.InteropServices</AssemblyReference>
+      <AssemblyReference>System.Security.Permissions</AssemblyReference>
+      <AssemblyReference>System.Text.RegularExpressions</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities.Design</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>UiPath.Platform</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Word</AssemblyReference>
+      <AssemblyReference>UiPath.Word.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Word.Activities.Design</AssemblyReference>
+      <AssemblyReference>System.Linq.Expressions</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Formatters</AssemblyReference>
+      <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Process Students" sap:VirtualizedContainerService.HintSize="897.2,2672" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sd:DataTable" Name="dtStudents" />
+      <Variable x:TypeArguments="x:Int32" Name="totalStudents" />
+      <Variable x:TypeArguments="x:Int32" Name="certificatesGenerated" />
+      <Variable x:TypeArguments="x:Int32" Name="emailsSent" />
+      <Variable x:TypeArguments="x:Int32" Name="failedRecords" />
+      <Variable x:TypeArguments="x:Int32" Name="emailsSkipped" />
+      <Variable x:TypeArguments="x:String" Name="logPath" />
+      <Variable x:TypeArguments="x:Boolean" Name="logExists" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Certificates folder" sap:VirtualizedContainerService.HintSize="486.4,122.4" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[System.IO.Path.Combine(in_ProjectDirectory, &quot;Certificates&quot;)]" />
+    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create working documents folder" sap:VirtualizedContainerService.HintSize="486.4,122.4" sap2010:WorkflowViewState.IdRef="CreateDirectory_2" Path="[System.IO.Path.Combine(in_ProjectDirectory, &quot;Certificates\Working&quot;)]" />
+    <ueab:ExcelProcessScopeX DisplayAlerts="{x:Null}" ExistingProcessAction="{x:Null}" FileConflictResolution="{x:Null}" LaunchMethod="{x:Null}" LaunchTimeout="{x:Null}" MacroSettings="{x:Null}" ProcessMode="{x:Null}" ShowExcelWindow="{x:Null}" DisplayName="Excel Process Scope" sap:VirtualizedContainerService.HintSize="486.4,577.6" sap2010:WorkflowViewState.IdRef="ExcelProcessScopeX_1">
+      <ueab:ExcelProcessScopeX.Body>
+        <ActivityAction x:TypeArguments="ui:IExcelProcess">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="ui:IExcelProcess" Name="ExcelProcessScopeTag" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Read Students workbook" sap:VirtualizedContainerService.HintSize="484.8,499.2" sap2010:WorkflowViewState.IdRef="Sequence_8">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <ueab:ExcelApplicationCard CreateNewFile="False" DisplayName="Use Students workbook" sap:VirtualizedContainerService.HintSize="451.2,439.2" sap2010:WorkflowViewState.IdRef="ExcelApplicationCard_1" ReadOnly="True" ResizeWindow="None" WorkbookPath="[System.IO.Path.Combine(in_ProjectDirectory, &quot;Data\Students.xlsx&quot;)]">
+              <ueab:ExcelApplicationCard.Body>
+                <ActivityAction x:TypeArguments="ue:IWorkbookQuickHandle">
+                  <ActivityAction.Argument>
+                    <DelegateInArgument x:TypeArguments="ue:IWorkbookQuickHandle" Name="Excel" />
+                  </ActivityAction.Argument>
+                  <Sequence DisplayName="Read Students data" sap:VirtualizedContainerService.HintSize="449.6,220" sap2010:WorkflowViewState.IdRef="Sequence_9">
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                    <ueab:ReadRangeX DisplayName="Read Students.xlsx" sap:VirtualizedContainerService.HintSize="416,160" sap2010:WorkflowViewState.IdRef="ReadRangeX_1" Range="[Excel.Sheet(&quot;Students&quot;).Range(&quot;A1&quot;)]" SaveTo="[dtStudents]" />
+                  </Sequence>
+                </ActivityAction>
+              </ueab:ExcelApplicationCard.Body>
+            </ueab:ExcelApplicationCard>
+          </Sequence>
+        </ActivityAction>
+      </ueab:ExcelProcessScopeX.Body>
+    </ueab:ExcelProcessScopeX>
+    <Assign DisplayName="Set total students" sap:VirtualizedContainerService.HintSize="486.4,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[totalStudents]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[dtStudents.Rows.Count]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Initialize counters" sap:VirtualizedContainerService.HintSize="486.4,174.4" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[certificatesGenerated]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[0]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Initialize sent count" sap:VirtualizedContainerService.HintSize="486.4,174.4" sap2010:WorkflowViewState.IdRef="Assign_3">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[emailsSent]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[0]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Initialize failed count" sap:VirtualizedContainerService.HintSize="486.4,174.4" sap2010:WorkflowViewState.IdRef="Assign_4">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[failedRecords]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[0]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Initialize skipped email count" sap:VirtualizedContainerService.HintSize="486.4,174.4" sap2010:WorkflowViewState.IdRef="Assign_5">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[emailsSkipped]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[0]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Set processing log path" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="Assign_23">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[logPath]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[System.IO.Path.Combine(in_ProjectDirectory, "Logs\certificate-processing.csv")]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Logs folder" sap:VirtualizedContainerService.HintSize="451.2,122.4" sap2010:WorkflowViewState.IdRef="CreateDirectory_3" Path="[System.IO.Path.Combine(in_ProjectDirectory, &quot;Logs&quot;)]" />
+    <ui:PathExists Resource="{x:Null}" DisplayName="Check processing log" Exists="[logExists]" sap:VirtualizedContainerService.HintSize="451.2,173.6" sap2010:WorkflowViewState.IdRef="PathExists_2" Path="[logPath]" PathType="File" />
+    <If Condition="[Not logExists]" DisplayName="Initialize processing log header" sap:VirtualizedContainerService.HintSize="451.2,182.4" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <Sequence DisplayName="Write processing log header" sap2010:WorkflowViewState.IdRef="Sequence_10">
+          <ui:WriteTextFile File="{x:Null}" Output="{x:Null}" DisplayName="Write CSV header" FileName="[logPath]" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" Text="[&quot;StudentName,RegisterNumber,Course,Email,CertificatePath,CertificateStatus,EmailStatus,ProcessedAt,Error&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[dtStudents]" DisplayName="For Each Student" sap:VirtualizedContainerService.HintSize="451.2,201.6" sap2010:WorkflowViewState.IdRef="ForEachRow_1">
+      <ui:ForEachRow.Body>
+        <ActivityAction x:TypeArguments="sd:DataRow">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="sd:DataRow" Name="CurrentRow" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Process one student" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:String" Name="studentName" />
+              <Variable x:TypeArguments="x:String" Name="registerNumber" />
+              <Variable x:TypeArguments="x:String" Name="courseName" />
+              <Variable x:TypeArguments="x:String" Name="emailAddress" />
+              <Variable x:TypeArguments="x:String" Name="safeName" />
+              <Variable x:TypeArguments="x:String" Name="safeRegister" />
+              <Variable x:TypeArguments="x:String" Name="templatePath" />
+              <Variable x:TypeArguments="x:String" Name="workingDocPath" />
+              <Variable x:TypeArguments="x:String" Name="pdfPath" />
+              <Variable x:TypeArguments="x:Boolean" Name="pdfExists" />
+              <Variable x:TypeArguments="x:String" Name="logLine" />
+            </Sequence.Variables>
+            <TryCatch DisplayName="Process student safely" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+              <TryCatch.Try>
+                <Sequence DisplayName="Create certificate" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                  <Assign DisplayName="Read student name" sap2010:WorkflowViewState.IdRef="Assign_6">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[studentName]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[CurrentRow("StudentName").ToString.Trim]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Read register number" sap2010:WorkflowViewState.IdRef="Assign_7">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[registerNumber]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[CurrentRow("RegisterNumber").ToString.Trim]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Read course" sap2010:WorkflowViewState.IdRef="Assign_8">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[courseName]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[CurrentRow("Course").ToString.Trim]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Read email" sap2010:WorkflowViewState.IdRef="Assign_9">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[emailAddress]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[CurrentRow("Email").ToString.Trim]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Create safe student file name" sap2010:WorkflowViewState.IdRef="Assign_10">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[safeName]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[System.Text.RegularExpressions.Regex.Replace(studentName, "[^A-Za-z0-9_-]+", "_").Trim("_"c)]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Create safe register file name" sap2010:WorkflowViewState.IdRef="Assign_11">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[safeRegister]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[System.Text.RegularExpressions.Regex.Replace(registerNumber, "[^A-Za-z0-9_-]+", "_")]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Set template path" sap2010:WorkflowViewState.IdRef="Assign_12">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[templatePath]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[System.IO.Path.Combine(in_ProjectDirectory, "Templates\Template Certificate of Appreciation.doc")]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Set working document path" sap2010:WorkflowViewState.IdRef="Assign_13">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[workingDocPath]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[System.IO.Path.Combine(in_ProjectDirectory, "Certificates\Working\" &amp; safeRegister &amp; "_" &amp; safeName &amp; ".doc")]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Set PDF path" sap2010:WorkflowViewState.IdRef="Assign_14">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[pdfPath]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[System.IO.Path.Combine(in_ProjectDirectory, "Certificates\" &amp; safeRegister &amp; "_" &amp; safeName &amp; ".pdf")]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <ui:PathExists Resource="{x:Null}" DisplayName="Check existing certificate" Exists="[pdfExists]" sap2010:WorkflowViewState.IdRef="PathExists_1" Path="[pdfPath]" PathType="File" />
+                  <If Condition="[pdfExists]" DisplayName="Skip existing certificate" sap2010:WorkflowViewState.IdRef="If_1">
+                    <If.Then>
+                      <Sequence DisplayName="Existing certificate" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                        <ui:LogMessage DisplayName="Log existing certificate" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Certificate already exists for &quot; &amp; studentName &amp; &quot;. Existing PDF retained.&quot;]" />
+                      </Sequence>
+                    </If.Then>
+                    <If.Else>
+                      <Sequence DisplayName="Generate new certificate" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                        <ui:CopyFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="[workingDocPath]" DisplayName="Copy certificate template" sap2010:WorkflowViewState.IdRef="CopyFile_1" Overwrite="True" Path="[templatePath]" />
+                        <p:WordApplicationScope CreateNewFile="False" DisplayName="Open certificate template" FilePath="[workingDocPath]" sap2010:WorkflowViewState.IdRef="WordApplicationScope_1">
+                          <p:WordApplicationScope.Body>
+                            <ActivityAction x:TypeArguments="ui:WordDocument">
+                              <ActivityAction.Argument>
+                                <DelegateInArgument x:TypeArguments="ui:WordDocument" Name="WordDocumentScope" />
+                              </ActivityAction.Argument>
+                              <Sequence DisplayName="Edit certificate" sap2010:WorkflowViewState.IdRef="Sequence_6">
+                                <p:WordReplaceText Found="{x:Null}" DisplayName="Replace student name" sap2010:WorkflowViewState.IdRef="WordReplaceText_1" Replace="[studentName]" ReplaceAll="True" Search="[&quot;Title. FirstName LastName&quot;]" />
+                                <p:WordReplaceText Found="{x:Null}" DisplayName="Replace course text" sap2010:WorkflowViewState.IdRef="WordReplaceText_2" Replace="[&quot;For successfully completing &quot; &amp; courseName]" ReplaceAll="True" Search="[&quot;For being an Outstanding Professional&quot;]" />
+                                <p:WordReplaceText Found="{x:Null}" DisplayName="Replace date" sap2010:WorkflowViewState.IdRef="WordReplaceText_3" Replace="[DateTime.Today.ToString(&quot;dd/MM/yyyy&quot;)]" ReplaceAll="True" Search="[&quot;DD/MM/YYYY&quot;]" />
+                                <p:WordReplaceText Found="{x:Null}" DisplayName="Replace organization" sap2010:WorkflowViewState.IdRef="WordReplaceText_4" Replace="[in_OrganizationName]" ReplaceAll="True" Search="[&quot;CompanyName&quot;]" />
+                                <p:WordExportToPdf DisplayName="Export certificate to PDF" FilePath="[pdfPath]" sap2010:WorkflowViewState.IdRef="WordExportToPdf_1" ReplaceExisting="False" />
+                              </Sequence>
+                            </ActivityAction>
+                          </p:WordApplicationScope.Body>
+                        </p:WordApplicationScope>
+                        <Assign DisplayName="Count generated certificate" sap2010:WorkflowViewState.IdRef="Assign_15">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:Int32">[certificatesGenerated]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:Int32">[certificatesGenerated + 1]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                        <ui:LogMessage DisplayName="Log generated certificate" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Certificate generated for &quot; &amp; studentName]" />
+                      </Sequence>
+                    </If.Else>
+                  </If>
+                  <Assign DisplayName="Count skipped email" sap2010:WorkflowViewState.IdRef="Assign_16">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:Int32">[emailsSkipped]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:Int32">[emailsSkipped + 1]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <ui:LogMessage DisplayName="Log safe email mode" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Email skipped for &quot; &amp; studentName &amp; &quot; (&quot; &amp; emailAddress &amp; &quot;); sending is disabled.&quot;]" />
+                  <Assign DisplayName="Build successful processing log row" sap2010:WorkflowViewState.IdRef="Assign_24">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[logLine]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[String.Join(",", New String() {Convert.ToChar(34).ToString &amp; If(studentName Is Nothing, String.Empty, studentName).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(registerNumber Is Nothing, String.Empty, registerNumber).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(courseName Is Nothing, String.Empty, courseName).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(emailAddress Is Nothing, String.Empty, emailAddress).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(pdfPath Is Nothing, String.Empty, pdfPath).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(pdfExists, "Existing", "Generated") &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; "Skipped (disabled)" &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; DateTime.Now.ToString("o") &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)} )]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <ui:AppendLine File="{x:Null}" DisplayName="Append successful processing log row" FileName="[logPath]" sap2010:WorkflowViewState.IdRef="AppendLine_1" Text="[logLine]" UseDefaultEncoding="False" />
+                </Sequence>
+              </TryCatch.Try>
+              <TryCatch.Catches>
+                <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+                  <ActivityAction x:TypeArguments="s:Exception">
+                    <ActivityAction.Argument>
+                      <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                    </ActivityAction.Argument>
+                    <Sequence DisplayName="Handle student failure" sap2010:WorkflowViewState.IdRef="Sequence_7">
+                      <Assign DisplayName="Count failed record" sap2010:WorkflowViewState.IdRef="Assign_17">
+                        <Assign.To>
+                          <OutArgument x:TypeArguments="x:Int32">[failedRecords]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                          <InArgument x:TypeArguments="x:Int32">[failedRecords + 1]</InArgument>
+                        </Assign.Value>
+                      </Assign>
+                      <ui:LogMessage DisplayName="Log student failure" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Error" Message="[&quot;Student processing failed: &quot; &amp; exception.ToString()]" />
+                      <Assign DisplayName="Build failed processing log row" sap2010:WorkflowViewState.IdRef="Assign_25">
+                        <Assign.To>
+                          <OutArgument x:TypeArguments="x:String">[logLine]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                          <InArgument x:TypeArguments="x:String">[String.Join(",", New String() {Convert.ToChar(34).ToString &amp; If(studentName Is Nothing, String.Empty, studentName).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(registerNumber Is Nothing, String.Empty, registerNumber).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(courseName Is Nothing, String.Empty, courseName).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(emailAddress Is Nothing, String.Empty, emailAddress).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(pdfPath Is Nothing, String.Empty, pdfPath).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; "Failed" &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; "Not attempted" &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; DateTime.Now.ToString("o") &amp; Convert.ToChar(34), Convert.ToChar(34).ToString &amp; If(exception Is Nothing, String.Empty, exception.ToString.Replace(Convert.ToChar(13).ToString, " ").Replace(Convert.ToChar(10).ToString, " ")).Replace(Convert.ToChar(34), Convert.ToChar(34).ToString &amp; Convert.ToChar(34)) &amp; Convert.ToChar(34)} )]</InArgument>
+                        </Assign.Value>
+                      </Assign>
+                      <ui:AppendLine File="{x:Null}" DisplayName="Append failed processing log row" FileName="[logPath]" sap2010:WorkflowViewState.IdRef="AppendLine_2" Text="[logLine]" UseDefaultEncoding="False" />
+                    </Sequence>
+                  </ActivityAction>
+                </Catch>
+              </TryCatch.Catches>
+            </TryCatch>
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEachRow.Body>
+    </ui:ForEachRow>
+    <Assign DisplayName="Return total students" sap2010:WorkflowViewState.IdRef="Assign_18">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[out_TotalStudents]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[totalStudents]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Return generated count" sap2010:WorkflowViewState.IdRef="Assign_19">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[out_CertificatesGenerated]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[certificatesGenerated]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Return sent count" sap2010:WorkflowViewState.IdRef="Assign_20">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[out_EmailsSent]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[emailsSent]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Return failed count" sap2010:WorkflowViewState.IdRef="Assign_21">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[out_FailedRecords]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[failedRecords]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Return skipped count" sap2010:WorkflowViewState.IdRef="Assign_22">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[out_EmailsSkipped]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[emailsSkipped]</InArgument>
+      </Assign.Value>
+    </Assign>
+  </Sequence>
+</Activity>
